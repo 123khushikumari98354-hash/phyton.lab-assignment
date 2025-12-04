@@ -1,0 +1,86 @@
+ gradebook.py
+ # -----------------------------------------------
+# GradeBook Analyzer (Short Version)
+# Name: Khushi Kumari
+# -----------------------------------------------
+
+
+
+# ---------- STATS FUNCTIONS ----------
+def avg(m): return sum(m.values()) / len(m)
+def median(m):
+    s = sorted(m.values())
+    n = len(s)
+    return (s[n//2] if n % 2 != 0 else (s[n//2] + s[n//2 - 1]) / 2)
+def max_score(m): return max(m, key=m.get), max(m.values())
+def min_score(m): return min(m, key=m.get), min(m.values())
+
+# ---------- GRADE FUNCTION ----------
+def grade(x):
+    if x >= 90: return "A"
+    if x >= 80: return "B"
+    if x >= 70: return "C"
+    if x >= 60: return "D"
+    return "F"
+
+# ---------- INPUT FUNCTIONS ----------
+def manual():
+    data = {}
+    for _ in range(int(input("Students count: "))):
+        name = input("Name: ")
+        data[name] = int(input("Marks: "))
+    return data
+
+def load_csv():
+    data = {}
+    try:
+        with open(input("CSV file name: ")) as f:
+            for n, m in list(csv.reader(f))[1:]:
+                data[n] = int(m)
+    except:
+        print("Error reading file!")
+    return data
+
+# ---------- PRINT TABLE ----------
+def show_table(m, g):
+    print("\nName\tMarks\tGrade\n-------------------------------")
+    for n in m:
+        print(f"{n}\t{m[n]}\t{g[n]}")
+
+# ---------- MAIN ----------
+while True:
+    print("\n1.Manual Input\n2.CSV Input\n3.Exit")
+    ch = input("Choice: ")
+
+    if ch == "1": marks = manual()
+    elif ch == "2": marks = load_csv()
+    elif ch == "3": break
+    else:
+        print("Invalid!"); continue
+
+    # Stats
+    print("\n--- Statistics ---")
+    print("Average:", round(avg(marks), 2))
+    print("Median :", median(marks))
+    mx, mxs = max_score(marks); print("Max:", mx, mxs)
+    mn, mns = min_score(marks); print("Min:", mn, mns)
+
+    # Grades
+    grades = {n: grade(m) for n, m in marks.items()}
+    print("\n--- Grade Count ---")
+    for g in "ABCDE":
+        print(g + ":", list(grades.values()).count(g))
+
+    # Pass / Fail
+    passed = [n for n, m in marks.items() if m >= 40]
+    failed = [n for n, m in marks.items() if m < 40]
+    print("\nPassed:", passed)
+    print("Failed:", failed)
+
+    # Table
+    show_table(marks, grades)
+
+    if input("\nRun again? (y/n): ").lower() != "y":
+        break
+
+print("\nThank you for using GradeBook Analyzer!")
